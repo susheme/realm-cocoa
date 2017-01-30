@@ -154,10 +154,14 @@ NSError *make_auth_error_client_issue() {
 }
 
 NSError *make_auth_error(RLMSyncErrorResponseModel *model) {
-    NSString *description = model.title;
-    return [NSError errorWithDomain:RLMSyncAuthErrorDomain
-                               code:model.code
-                           userInfo:description ? @{NSLocalizedDescriptionKey: description} : nil];
+    NSMutableDictionary<NSString *, NSString *> *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+    if (NSString *description = model.title) {
+        [userInfo setObject:description forKey:NSLocalizedDescriptionKey];
+    }
+    if (NSString *hint = model.hint) {
+        [userInfo setObject:hint forKey:NSLocalizedRecoverySuggestionErrorKey];
+    }
+    return [NSError errorWithDomain:RLMSyncAuthErrorDomain code:model.code userInfo:userInfo];
 }
 
 NSError *make_permission_error_get(NSString *description, util::Optional<NSInteger> code) {
