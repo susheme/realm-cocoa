@@ -136,6 +136,8 @@ static inline NSDate *RLMTimestampToNSDate(realm::Timestamp ts) NS_RETURNS_RETAI
 }
 
 static inline realm::Timestamp RLMTimestampForNSDate(__unsafe_unretained NSDate *const date) {
+    if (!date)
+        return {};
     auto timeInterval = date.timeIntervalSinceReferenceDate;
     if (isnan(timeInterval))
         return {0, 0}; // Arbitrary choice

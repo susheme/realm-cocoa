@@ -45,7 +45,9 @@ extension NSDate: MinMaxType {}
 
  - see: `sum(ofProperty:)`, `average(ofProperty:)`
  */
-public protocol AddableType {}
+public protocol AddableType {
+    init()
+}
 extension NSNumber: AddableType {}
 extension Double: AddableType {}
 extension Float: AddableType {}
@@ -81,7 +83,7 @@ public final class Results<T: RealmCollectionValue>: NSObject, NSFastEnumeration
 
     /// A human-readable description of the objects represented by the results.
     public override var description: String {
-        return RLMDescriptionWithMaxDepth("Results<\(rlmResults.objectClassName!)>", rlmResults, RLMDescriptionMaxDepth)
+        return RLMDescriptionWithMaxDepth("Results", rlmResults, RLMDescriptionMaxDepth)
     }
 
     // MARK: Fast Enumeration

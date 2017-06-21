@@ -32,7 +32,7 @@ public class ListBase: RLMListBase {
     }
 
     @objc private func descriptionWithMaxDepth(_ depth: UInt) -> String {
-        return RLMDescriptionWithMaxDepth("List<\(_rlmArray.objectClassName)>", _rlmArray, depth)
+        return RLMDescriptionWithMaxDepth("List", _rlmArray, depth)
     }
 
     /// Returns the number of objects in this List.
@@ -70,7 +70,7 @@ public final class List<T: RealmCollectionValue>: ListBase {
 
     /// Creates a `List` that holds Realm model objects of type `T`.
     public override init() {
-        super.init(array: RLMArray(objectClassName: T.className()))
+        super.init(array: T._rlmArray())
     }
 
     internal init(rlmArray: RLMArray<AnyObject>) {
@@ -447,6 +447,38 @@ public final class List<T: RealmCollectionValue>: ListBase {
         return _rlmArray.addNotificationBlock { _, change, error in
             block(RealmCollectionChange.fromObjc(value: self, change: change, error: error))
         }
+    }
+}
+
+extension List where Element: MinMaxType {
+    /**
+     Returns the minimum (lowest) value in the list, or `nil` if the list is empty.
+     */
+    public func min() -> Element? {
+        return _rlmArray.min(ofProperty: "self").map(dynamicBridgeCast)
+    }
+
+    /**
+     Returns the maximum (highest) value in the list, or `nil` if the list is empty.
+     */
+    public func max() -> Element? {
+        return _rlmArray.max(ofProperty: "self").map(dynamicBridgeCast)
+    }
+}
+
+extension List where Element: AddableType {
+    /**
+     Returns the sum of the values in the list.
+     */
+    public func sum() -> Element {
+        return sum(ofProperty: "self")
+    }
+
+    /**
+     Returns the average of the values in the list, or `nil` if the list is empty.
+     */
+    public func average() -> Double? {
+        return average(ofProperty: "self")
     }
 }
 

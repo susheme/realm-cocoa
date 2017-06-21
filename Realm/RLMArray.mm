@@ -397,6 +397,11 @@ static void validateArrayBounds(__unsafe_unretained RLMArray *const ar,
 - (void)validateAggregateProperty:(NSString *)propertyName
                            method:(SEL)aggregateMethod
                         allowDate:(bool)allowDate {
+    if ([propertyName isEqualToString:@"self"]) {
+        // FIXME: probably wrong for arrays of non-primitives
+        return;
+    }
+
     RLMObjectSchema *objectSchema;
     if (_backingArray.count) {
         objectSchema = [_backingArray[0] objectSchema];

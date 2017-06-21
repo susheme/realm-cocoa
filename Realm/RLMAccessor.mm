@@ -136,7 +136,7 @@ void setValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex,
               __unsafe_unretained id<NSFastEnumeration> const value) {
     RLMVerifyInWriteTransaction(obj);
 
-    realm::List list(obj->_realm->_realm, obj->_row.get_linklist(colIndex));
+    realm::List list(obj->_realm->_realm, *obj->_row.get_table(), colIndex, obj->_row.get_index());
     if ([(id)value respondsToSelector:@selector(isBackedByList:)] && [(id)value isBackedByList:list]) {
         return; // self-assignment is a no-op
     }
@@ -146,8 +146,11 @@ void setValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex,
         return;
     }
 
-    RLMAccessorContext ctx(obj->_realm,
-                           obj->_info->linkTargetType(obj->_info->propertyForTableColumn(colIndex).index));
+    RLMClassInfo *info = obj->_info;
+    if (list.get_type() == realm::PropertyType::Object) {
+        info = &obj->_info->linkTargetType(obj->_info->propertyForTableColumn(colIndex).index);
+    }
+    RLMAccessorContext ctx(obj->_realm, *info);
     translateError([&] {
         for (id element in value) {
             list.add(ctx, element);
@@ -384,11 +387,23 @@ id unmanagedGetter(RLMProperty *prop, const char *) {
     }
     if (prop.array) {
         NSString *propName = prop.name;
-        NSString *objectClassName = prop.objectClassName;
+        if (prop.type == RLMPropertyTypeObject) {
+            NSString *objectClassName = prop.objectClassName;
+            return ^(RLMObjectBase *obj) {
+                id val = superGet(obj, propName);
+                if (!val) {
+                    val = [[RLMArray alloc] initWithObjectClassName:objectClassName];
+                    superSet(obj, propName, val);
+                }
+                return val;
+            };
+        }
+        auto type = prop.type;
+        auto optional = prop.optional;
         return ^(RLMObjectBase *obj) {
             id val = superGet(obj, propName);
             if (!val) {
-                val = [[RLMArray alloc] initWithObjectClassName:objectClassName];
+                val = [[RLMArray alloc] initWithObjectType:type optional:optional];
                 superSet(obj, propName, val);
             }
             return val;
@@ -403,10 +418,21 @@ id unmanagedSetter(RLMProperty *prop, const char *) {
     }
 
     NSString *propName = prop.name;
-    NSString *objectClassName = prop.objectClassName;
+    if (prop.type == RLMPropertyTypeObject) {
+        NSString *objectClassName = prop.objectClassName;
+        return ^(RLMObjectBase *obj, id<NSFastEnumeration> ar) {
+            // make copy when setting (as is the case for all other variants)
+            RLMArray *standaloneAr = [[RLMArray alloc] initWithObjectClassName:objectClassName];
+            [standaloneAr addObjects:ar];
+            superSet(obj, propName, standaloneAr);
+        };
+    }
+
+    auto type = prop.type;
+    auto optional = prop.optional;
     return ^(RLMObjectBase *obj, id<NSFastEnumeration> ar) {
         // make copy when setting (as is the case for all other variants)
-        RLMArray *standaloneAr = [[RLMArray alloc] initWithObjectClassName:objectClassName];
+        RLMArray *standaloneAr = [[RLMArray alloc] initWithObjectType:type optional:optional];
         [standaloneAr addObjects:ar];
         superSet(obj, propName, standaloneAr);
     };
@@ -574,7 +600,7 @@ id RLMDynamicGetByName(__unsafe_unretained RLMObjectBase *const obj,
 
 RLMAccessorContext::RLMAccessorContext(RLMAccessorContext& parent, realm::Property const& property)
 : _realm(parent._realm)
-, _info(parent._info.linkTargetType(property))
+, _info(property.type == realm::PropertyType::Object ? parent._info.linkTargetType(property) : parent._info)
 , _promote_existing(parent._promote_existing)
 {
 }
