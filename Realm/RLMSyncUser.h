@@ -113,8 +113,19 @@ NS_ASSUME_NONNULL_BEGIN
                 onCompletion:(RLMUserCompletionBlock)completion NS_REFINED_FOR_SWIFT;
 
 /**
- Create, log in, and asynchronously return a new user object. Credentials identifying the user must be passed in. The
- user becomes available in the completion block, at which point it is ready for use.
+ Create, log in, and asynchronously return a new user object.
+
+ If the log in completes successfully, the completion block will be called
+ and passed in a `RLMSyncUser` object representing the logged-in user. This
+ object can be used to open synchronized Realms. If the log in fails, the
+ completion block will be called and passed in an error.
+
+ The completion block always runs on the main queue.
+
+ @param credentials     A credentials value identifying the user to be logged in.
+ @param authServerURL   The URL of the authentication server (e.g. "http://realm.example.org:9080").
+ @param completion      A callback block that returns a user object or an error,
+                        indicating the completion of the login operation.
  */
 + (void)logInWithCredentials:(RLMSyncCredentials *)credentials
                authServerURL:(NSURL *)authServerURL

@@ -436,7 +436,11 @@ PermissionChangeCallback RLMWrapPermissionStatusCallback(RLMPermissionStatusBloc
                                      server:authServerURL
                                        JSON:json
                                     timeout:timeout
-                                 completion:handler];
+                                 completion:^(NSError *error, NSDictionary *dictionary) {
+                                     dispatch_async(dispatch_get_main_queue(), ^{
+                                         handler(error, dictionary);
+                                     });
+                                 }];
 }
 
 + (void)_performLoginForDirectAccessTokenCredentials:(RLMSyncCredentials *)credentials
