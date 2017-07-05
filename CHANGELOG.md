@@ -27,6 +27,12 @@
   correctly nil out nullable properties when updating an existing
   object when the `value` argument specifies nil or `NSNull` for
   the property value.
+* Remove deprecated `{RLM}SyncPermission` and `{RLM}SyncPermissionChange`
+  classes. Use `{RLM}SyncPermissionValue` instead.
+* Remove deprecated `-[RLMSyncUser permissionRealmWithError:]` and
+  `SyncUser.permissionRealm()` APIs. Use the new permissions system.
+* Remove deprecated error `RLMSyncErrorBadResponse`. Use
+  `RLMSyncAuthErrorBadResponse` instead.
 
 ### Enhancements
 
