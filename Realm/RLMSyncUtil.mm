@@ -135,6 +135,11 @@ std::shared_ptr<SyncSession> sync_session_for_realm(RLMRealm *realm) {
     return nullptr;
 }
 
+CocoaSyncUserContext& context_for(const std::shared_ptr<realm::SyncUser>& user)
+{
+    return *std::static_pointer_cast<CocoaSyncUserContext>(user->binding_context());
+}
+
 NSError *make_auth_error_bad_response(NSDictionary *json) {
     return [NSError errorWithDomain:RLMSyncAuthErrorDomain
                                code:RLMSyncAuthErrorBadResponse
