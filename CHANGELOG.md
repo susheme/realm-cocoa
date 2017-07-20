@@ -27,6 +27,13 @@
   correctly nil out nullable properties when updating an existing
   object when the `value` argument specifies nil or `NSNull` for
   the property value.
+* Rename `List.remove(objectAtIndex:)` to `List.remove(at:)` to match the named
+  used by 'RangeReplaceableCollection'.
+* Loosen `RLMArray` and `RLMResults`'s generic constraint from `RLMObject` to
+  `NSObject`. This may result in having to add some casts to disambiguate
+  types.
+* Remove `RLMPropertyTypeArray` in favor of a separate bool `array` property on
+  `RLMProperty`/`Property`.
 
 ### Enhancements
 
