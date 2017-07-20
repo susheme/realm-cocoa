@@ -497,8 +497,8 @@
     __attribute__((objc_precise_lifetime)) RLMRealm *r = [self immediatelyOpenRealmForURL:REALM_URL() user:user];
     if (!invoked) {
         [self waitForExpectationsWithTimeout:10.0 handler:nil];
-        XCTAssertTrue(user.state == RLMSyncUserStateLoggedOut);
     }
+    XCTAssertTrue(user.state == RLMSyncUserStateLoggedOut);
 }
 
 #pragma mark - Basic Sync

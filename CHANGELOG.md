@@ -7,11 +7,15 @@ x.x.x Release notes (yyyy-MM-dd)
 
 ### Enhancements
 
-* None.
+* Add support for additional authentication-related errors that might be
+  reported by a Realm Object Server.
+* An error handler can now be registered upon `{RLM}SyncUser`s in order to
+  report authentication-related errors that affect the user.
 
 ### Bugfixes
 
-* None.
+* Sync users are now automatically logged out upon receiving certain types
+  of errors that indicate they are no longer logged into the server.
 
 2.9.0 Release notes (2017-07-26)
 =============================================================
