@@ -25,13 +25,6 @@
 #import "RLMRealmUtil.hpp"
 #import "RLMRealm_Dynamic.h"
 
-// ONLY FOR TESTING
-#import "sync/sync_user.hpp"
-
-@interface RLMSyncUser ()
-- (std::shared_ptr<realm::SyncUser>)_syncUser;
-@end
-
 @interface RLMObjectServerTests : RLMSyncTestCase
 @end
 
@@ -490,8 +483,8 @@
         [ex fulfill];
     };
 
-    // Screw up the admin token on the user using a debug API
-    [user _syncUser]->update_refresh_token("not_a_real_refresh_token");
+    // Screw up the token on the user using a debug API
+    [self mungeRefreshTokenForUser:user value:@"not_a_real_refresh_token"];
 
     // Try to log in a Realm; this will cause our errorHandler block defined above to be fired.
     __attribute__((objc_precise_lifetime)) RLMRealm *r = [self immediatelyOpenRealmForURL:REALM_URL() user:user];

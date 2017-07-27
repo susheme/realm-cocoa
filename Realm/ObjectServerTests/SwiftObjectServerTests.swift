@@ -337,6 +337,37 @@ class SwiftObjectServerTests: SwiftSyncTestCase {
         }
     }
 
+    // MARK: - User-specific functionality
+
+    func testUserExpirationCallback() {
+        do {
+            let user = try synchronouslyLogInUser(for: basicCredentials(), server: authURL)
+
+            // Set a callback on the user
+            let ex = expectation(description: "Error callback should fire upon receiving an error")
+            var invoked = false
+            user.errorHandler = { (u, error) in
+                XCTAssertEqual(u.identity, user.identity)
+                XCTAssertEqual(error.code, .invalidCredential)
+                invoked = true
+                ex.fulfill()
+            }
+
+            // Screw up the token on the user.
+            mungeRefreshToken(for: user, value: "not-a-real-token")
+
+            // Try to log in a Realm; this will cause our errorHandler block defined above to be fired.
+            _ = try immediatelyOpenRealm(url: realmURL, user: user)
+            if !invoked {
+                waitForExpectations(timeout: 10.0, handler: nil)
+            }
+            XCTAssertEqual(user.state, .loggedOut)
+
+        } catch {
+            XCTFail("Got an error: \(error) (process: \(isParent ? "parent" : "child"))")
+        }
+    }
+
     // MARK: - Permissions
 
     func testPermissionChange() {
