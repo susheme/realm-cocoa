@@ -28,7 +28,8 @@
   object when the `value` argument specifies nil or `NSNull` for
   the property value.
 * Remove deprecated `{RLM}SyncPermission` and `{RLM}SyncPermissionChange`
-  classes. Use `{RLM}SyncPermissionValue` instead.
+  classes.
+* `{RLM}SyncPermissionValue` has been renamed to just `{RLM}SyncPermission`.
 * Remove deprecated `-[RLMSyncUser permissionRealmWithError:]` and
   `SyncUser.permissionRealm()` APIs. Use the new permissions system.
 * Remove deprecated error `RLMSyncErrorBadResponse`. Use
