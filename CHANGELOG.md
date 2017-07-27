@@ -27,6 +27,9 @@
   correctly nil out nullable properties when updating an existing
   object when the `value` argument specifies nil or `NSNull` for
   the property value.
+* Swift `Object` comparison and hashing behavior now works the same way as
+  that of `RLMObject` (objects are now only considered equatable if their
+  model class defines a primary key).
 
 ### Enhancements
 
@@ -42,6 +45,8 @@
   API allowing administrator users to retrieve information about a user based
   on their provider identity (for example, a username). Requires any edition
   of the Realm Object Server 1.8.2 or later.
+* Add Swift `Object.isSameObject(as:_)` API to perform the same function as
+  the existing Objective-C API `-[RLMObject isEqualToObject:]`.
 
 ### Bugfixes
 
@@ -69,8 +74,6 @@
   Server 1.6.0 or later.
 * Improve performance of creating Swift objects which contain at least one List
   property.
-* Add Swift `Object.isSameObject(as:_)` API to perform the same function as
-  the existing Objective-C API `-[RLMObject isEqualToObject:]`.
 
 ### Bugfixes
 
@@ -123,9 +126,6 @@
   correctly nil out nullable properties when updating an existing
   object when the `value` argument specifies nil or `NSNull` for
   the property value.
-* Swift `Object` comparison and hashing behavior now works the same way as
-  that of `RLMObject` (objects are now only considered equatable if their model
-  class defines a primary key).
 
 2.8.3 Release notes (2017-06-20)
 =============================================================
