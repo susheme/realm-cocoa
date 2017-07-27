@@ -272,15 +272,18 @@ extension SyncUser {
      - parameter credentials: A `SyncCredentials` object representing the user to log in.
      - parameter authServerURL: The URL of the authentication server (e.g. "http://realm.example.org:9080").
      - parameter timeout: How long the network client should wait, in seconds, before timing out.
+     - parameter queue: The dispatch queue upon which the callback should run. Defaults to the main queue.
      - parameter completion: A callback block to be invoked once the log in completes.
      */
     public static func logIn(with credentials: SyncCredentials,
                              server authServerURL: URL,
                              timeout: TimeInterval = 30,
+                             queue: DispatchQueue = DispatchQueue.main,
                              onCompletion completion: @escaping UserCompletionBlock) {
         return SyncUser.__logIn(with: RLMSyncCredentials(credentials),
                                 authServerURL: authServerURL,
                                 timeout: timeout,
+                                callbackQueue: queue,
                                 onCompletion: completion)
     }
 

@@ -103,22 +103,24 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Lifecycle
 
 /**
- Create, log in, and asynchronously return a new user object, specifying a custom timeout for the network request.
- Credentials identifying the user must be passed in. The user becomes available in the completion block, at which point
- it is ready for use.
+ Create, log in, and asynchronously return a new user object, specifying a custom
+ timeout for the network request and a custom queue to run the callback upon.
+ Credentials identifying the user must be passed in. The user becomes available in
+ the completion block, at which point it is ready for use.
  */
 + (void)logInWithCredentials:(RLMSyncCredentials *)credentials
                authServerURL:(NSURL *)authServerURL
                      timeout:(NSTimeInterval)timeout
+               callbackQueue:(dispatch_queue_t)callbackQueue
                 onCompletion:(RLMUserCompletionBlock)completion NS_REFINED_FOR_SWIFT;
 
 /**
  Create, log in, and asynchronously return a new user object.
 
- If the log in completes successfully, the completion block will be called
- and passed in a `RLMSyncUser` object representing the logged-in user. This
- object can be used to open synchronized Realms. If the log in fails, the
- completion block will be called and passed in an error.
+ If the login completes successfully, the completion block will invoked with
+ a `RLMSyncUser` object representing the logged-in user. This object can be
+ used to open synchronized Realms. If the login fails, the completion block
+ will be invoked with an error.
 
  The completion block always runs on the main queue.
 

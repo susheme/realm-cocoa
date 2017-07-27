@@ -27,6 +27,10 @@
   correctly nil out nullable properties when updating an existing
   object when the `value` argument specifies nil or `NSNull` for
   the property value.
+* The callback which runs when a sync user login succeeds or fails
+  now runs on the main queue by default.
+* A `callbackQueue` parameter has been added to the API
+  `+[RLMSyncUser logInWithCredentials:authServerURL:timeout:onCompletion:]`.
 
 ### Enhancements
 
