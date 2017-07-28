@@ -16,12 +16,36 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#import "RLMSyncPermissionResults.h"
+#import "RLMResults_Private.h"
 
-#import "sync/sync_permission.hpp"
+#import "results.hpp"
 
-@interface RLMSyncPermissionResults ()
+NS_ASSUME_NONNULL_BEGIN
 
-- (instancetype)initWithResults:(std::unique_ptr<realm::PermissionResults>)results;
-
+@interface RLMResults () {
+@protected
+    realm::Results _results;
+}
+- (instancetype)initWithResults:(realm::Results)results;
 @end
+
+NS_ASSUME_NONNULL_END
+
+// Utility functions
+
+[[gnu::noinline]]
+[[noreturn]]
+void RLMThrowResultsError(NSString * _Nullable aggregateMethod);
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
+template<typename Function>
+static auto translateErrors(Function&& f, NSString *aggregateMethod=nil) {
+    try {
+        return f();
+    }
+    catch (...) {
+        RLMThrowResultsError(aggregateMethod);
+    }
+}
+#pragma clang diagnostic pop

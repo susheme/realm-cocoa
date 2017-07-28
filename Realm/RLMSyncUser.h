@@ -213,7 +213,7 @@ NS_SWIFT_UNAVAILABLE("Use the full version of this API.");
 
  @see `RLMSyncPermissionResults`
  */
-- (void)retrievePermissionsWithCallback:(RLMPermissionResultsBlock)callback;
+- (void)retrievePermissionsWithCallback:(RLMPermissionResultsBlock)callback NS_REFINED_FOR_SWIFT;
 
 /**
  Apply a given permission.

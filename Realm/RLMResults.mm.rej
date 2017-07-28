@@ -1,0 +1,9 @@
+diff a/Realm/RLMResults.mm b/Realm/RLMResults.mm	(rejected hunks)
+@@ -32,7 +32,6 @@
+ #import "RLMThreadSafeReference_Private.hpp"
+ #import "RLMUtil.hpp"
+ 
+-#import "results.hpp"
+ #import "shared_realm.hpp"
+ 
+ #import <objc/message.h>

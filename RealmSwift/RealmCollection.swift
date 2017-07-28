@@ -31,7 +31,7 @@ public struct RLMIterator<T: RealmCollectionValue>: IteratorProtocol {
 
     /// Advance to the next element and return it, or `nil` if no next element exists.
     public func next() -> T? {
-        return unsafeBitCast(generatorBase.next() as! Object?, to: Optional<T>.self)
+        return generatorBase.next() as! T?
     }
 }
 
@@ -124,6 +124,7 @@ private func forceCast<A, U>(_ from: A, to type: U.Type) -> U {
 
 /// A type which can be stored in a Realm List or Results
 public protocol RealmCollectionValue {
+    /// :nodoc:
     static func className() -> String
 }
 

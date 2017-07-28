@@ -47,8 +47,11 @@ class SwiftPermissionsAPITests: SwiftSyncTestCase {
                                       file: StaticString = #file,
                                       line: UInt = #line) {
         let ex = expectation(description: "Checking permission count")
-        let token = results.addNotificationBlock { (error) in
-            XCTAssertNil(error, "Notification returned error '\(error!)' when running test at \(file):\(line)")
+        let token = results.addNotificationBlock { (change) in
+            if case let .error(theError) = change {
+                XCTFail("Notification returned error '\(theError)' when running test at \(file):\(line)")
+                return
+            }
             if results.count == expected {
                 ex.fulfill()
             }
@@ -63,8 +66,11 @@ class SwiftPermissionsAPITests: SwiftSyncTestCase {
                      line: UInt = #line) -> SyncPermissionValue? {
         let ex = expectation(description: "Retrieving permission")
         var finalValue: SyncPermissionValue?
-        let token = results.addNotificationBlock { (error) in
-            XCTAssertNil(error, "Notification returned error '\(error!)' when running test at \(file):\(line)")
+        let token = results.addNotificationBlock { (change) in
+            if case let .error(theError) = change {
+                XCTFail("Notification returned error '\(theError)' when running test at \(file):\(line)")
+                return
+            }
             for result in results where result == permission {
                 finalValue = result
                 ex.fulfill()
@@ -86,8 +92,11 @@ class SwiftPermissionsAPITests: SwiftSyncTestCase {
                                line: UInt = #line) {
         let ex = expectation(description: "Looking for permission")
         var isPresent = false
-        let token = results.addNotificationBlock { (error) in
-            XCTAssertNil(error, "Notification returned error '\(error!)' when running test at \(file):\(line)")
+        let token = results.addNotificationBlock { (change) in
+            if case let .error(theError) = change {
+                XCTFail("Notification returned error '\(theError)' when running test at \(file):\(line)")
+                return
+            }
             isPresent = results.contains(permission)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
@@ -151,9 +160,9 @@ class SwiftPermissionsAPITests: SwiftSyncTestCase {
         XCTAssertNotNil(finalValue, "Did not find the permission \(expectedPermission)")
 
         // Check getting permission by its index.
-        let index = results.index(ofObject: expectedPermission)
-        XCTAssertNotEqual(index, NSNotFound)
-        XCTAssertTrue(expectedPermission == results.object(at: index))
+        let index = results.index(of: expectedPermission)
+        XCTAssertNotNil(index)
+        XCTAssertTrue(expectedPermission == results[index!])
     }
 
     /// Observing permission changes should work.
@@ -176,8 +185,11 @@ class SwiftPermissionsAPITests: SwiftSyncTestCase {
 
         // Register notifications.
         let noteEx = expectation(description: "Notification should fire")
-        let token = results.addNotificationBlock { (error) in
-            XCTAssertNil(error)
+        let token = results.addNotificationBlock { (change) in
+            if case .error = change {
+                XCTFail("Should not return an error")
+                return
+            }
             if results.count > 0 {
                 noteEx.fulfill()
             }
